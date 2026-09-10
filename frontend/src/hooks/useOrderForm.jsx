@@ -39,6 +39,30 @@ function mapEnum(arr, map) {
   return arr.map((v) => map[v] ?? null).filter((v) => v !== null);
 }
 
+// One validator per wizard step, in step order. Each returns an error
+// message or null. Used both to block "Next" on the current step and,
+// defensively, to re-check every earlier step on final submit (in case the
+// user went back and un-filled something).
+const STEP_VALIDATORS = [
+  (formData) => {
+    if (formData.detectionTypes.length === 0)
+      return "Please select at least one detection type.";
+    if (formData.detectionTypes.length > 1 && !formData.dataFusionMethod)
+      return "Please select a data fusion method.";
+    return null;
+  },
+  (formData) => {
+    if (!formData.recognitionType) return "Please select a recognition type.";
+    if (!formData.enviroment) return "Please enter the model's operating environment.";
+    return null;
+  },
+  (formData, datasetProofFile) => {
+    if (formData.isDatasetVerified && !datasetProofFile)
+      return "Please upload a proof file for the verified dataset.";
+    return null;
+  }
+];
+
 export function useOrderForm() {
   const navigate = useNavigate();
 
@@ -50,8 +74,16 @@ export function useOrderForm() {
   const [showNdaDialog, setShowNdaDialog]   = useState(false);
   const [orderIdForNda, setOrderIdForNda]   = useState(null);
   const [customerName]                      = useState("");
+  const [toast, setToast]                   = useState(null); // { message, key }
 
-  const handleNext = () => setActiveStep((p) => p + 1);
+  const showToast = (message) => setToast({ message, key: Date.now() });
+  const closeToast = () => setToast(null);
+
+  const handleNext = () => {
+    const error = STEP_VALIDATORS[activeStep](formData, datasetProofFile);
+    if (error) { showToast(error); return; }
+    setActiveStep((p) => p + 1);
+  };
   const handleBack = () =>
     activeStep === 0 ? navigate("/") : setActiveStep((p) => p - 1);
 
@@ -92,16 +124,10 @@ export function useOrderForm() {
   };
 
   const handleSubmit = async () => {
-    if (formData.detectionTypes.length === 0)
-      return alert("Please select at least one detection type");
-    if (formData.detectionTypes.length > 1 && !formData.dataFusionMethod)
-      return alert("Please select a data fusion method");
-    if (!formData.recognitionType)
-      return alert("Please select a recognition type");
-    if (!formData.enviroment)
-      return alert("Please enter the model's operating environment");
-    if (formData.isDatasetVerified && !datasetProofFile)
-      return alert("Please upload a proof file for the verified dataset.");
+    for (let step = 0; step <= activeStep; step++) {
+      const error = STEP_VALIDATORS[step](formData, datasetProofFile);
+      if (error) { showToast(error); return; }
+    }
 
     setIsSaving(true);
     try {
@@ -146,7 +172,7 @@ export function useOrderForm() {
       setOrderIdForNda(newOrderId);
       setShowNdaDialog(true);
     } catch (err) {
-      alert(
+      showToast(
         typeof err?.message === "string"
           ? err.message
           : "Failed to submit your order. Please try again."
@@ -171,6 +197,7 @@ export function useOrderForm() {
     droneEntry, setDroneEntry,
     datasetProofFile, setDatasetProofFile,
     showNdaDialog, orderIdForNda, customerName,
+    toast, closeToast,
     handleNext, handleBack,
     handleChange, handleDetectionTypeChange,
     handleAddDroneType, handleSubmit,

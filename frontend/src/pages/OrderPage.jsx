@@ -1,6 +1,6 @@
 import {
   Box, Typography, Button, Card, CardContent,
-  Stepper, Step, StepLabel, Divider
+  Stepper, Step, StepLabel, Divider, Snackbar, Alert
 } from "@mui/material";
 import { StepDataset, StepDetection, StepRecognition } from "./OrderSteps";
 import EmailCaptureDialog from "../components/EmailCaptureDialog";
@@ -20,6 +20,7 @@ export default function OrderPage() {
     droneEntry, setDroneEntry,
     setDatasetProofFile,
     showNdaDialog, orderIdForNda, customerName,
+    toast, closeToast,
     handleNext, handleBack,
     handleChange, handleDetectionTypeChange,
     handleAddDroneType, handleSubmit,
@@ -90,6 +91,18 @@ export default function OrderPage() {
         onClose={handleNdaClose}
         onSend={handleNdaSend}
       />
+
+      <Snackbar
+        key={toast?.key}
+        open={!!toast}
+        autoHideDuration={5000}
+        onClose={closeToast}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={closeToast} severity="error" variant="filled" sx={{ width: "100%" }}>
+          {toast?.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
