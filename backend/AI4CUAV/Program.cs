@@ -70,8 +70,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
 });
 
-builder.Services.Configure<SendGridConfig>(builder.Configuration.GetSection("SendGrid"));
-builder.Services.AddSingleton<IEmailSender, SendGridEmailSender>();
+builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
 builder.Services.AddSingleton<INdaGenerator, PdfNdaGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDatasetService, DatasetService>();
