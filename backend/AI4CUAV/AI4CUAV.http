@@ -1,0 +1,35 @@
+@AI4CUAV_HostAddress = https://localhost:7184
+
+### Register a new (non-admin) account
+POST {{AI4CUAV_HostAddress}}/api/Account/register
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "Password1"
+}
+
+### Log in (returns a JWT)
+POST {{AI4CUAV_HostAddress}}/api/Account/login
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "Password1"
+}
+
+### Submit an order (public, no auth required)
+POST {{AI4CUAV_HostAddress}}/api/Orders
+Content-Type: application/json
+
+{
+  "detectionTypes": ["Thermal"],
+  "recognitionType": 0,
+  "enviroment": "Urban"
+}
+
+### List orders (admin only — replace {{token}} with a JWT from an admin login)
+GET {{AI4CUAV_HostAddress}}/api/Orders
+Authorization: Bearer {{token}}
+
+###

@@ -1,0 +1,11 @@
+## .NET build output
+bin/
+obj/
+*.user
+
+## IDE
+.vs/
+
+## Uploaded runtime data — never commit real user uploads
+AI4CUAV/Uploads/*
+!AI4CUAV/Uploads/.gitkeep

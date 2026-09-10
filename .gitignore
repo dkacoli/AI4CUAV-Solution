@@ -1,0 +1,19 @@
+# Non-repo project artifacts (presentations, docs, backups) kept locally only.
+*.rar
+*.zip
+*.pptx
+*.docx
+
+# Pre-refactor writeup (describes the old structure, now stale) and a personal
+# planning note — not repo documentation. Move either into docs/ if you want
+# them tracked.
+/BeforeAndAfterAI4CUAV.txt
+/Unified Scenario Based Evaluation F.txt
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.claude
+.DS_Store
+Thumbs.db
