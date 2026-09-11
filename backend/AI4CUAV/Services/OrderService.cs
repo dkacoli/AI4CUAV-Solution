@@ -50,7 +50,7 @@ namespace AI4CUAV1.Services
                 OrderStatus = "Pending",
                 Enviroment = dto.Enviroment,
                 HasAnnotationType = dto.HasAnnotationType,
-                AnnotationFormat = dto.AnnotationFormat,
+                AnnotationFormat = "YOLO",
                 DataModality = dto.DataModality,
                 IsDatasetVerified = dto.IsDatasetVerified
             };

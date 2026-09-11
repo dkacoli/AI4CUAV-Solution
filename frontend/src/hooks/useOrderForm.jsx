@@ -89,10 +89,11 @@ export function useOrderForm() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
+    setFormData((prev) => {
+      if (name === "hasAnnotationType")
+        return { ...prev, hasAnnotationType: checked, annotationFormat: checked ? "YOLO" : "" };
+      return { ...prev, [name]: type === "checkbox" ? checked : value };
+    });
   };
 
   const handleDetectionTypeChange = (e) => {
